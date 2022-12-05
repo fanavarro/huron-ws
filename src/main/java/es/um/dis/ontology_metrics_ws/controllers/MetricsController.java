@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
+import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionListDTO;
 import es.um.dis.ontology_metrics_ws.services.AnalysisService;
 import es.um.dis.ontology_metrics_ws.services.CalculateMetricsService;
 import es.um.dis.ontology_metrics_ws.services.ZipService;
@@ -44,6 +44,17 @@ public class MetricsController {
 	@Autowired
 	private ZipService zipService;
     
+	@RequestMapping(value="/hello/{name}", method = RequestMethod.GET)
+	public String hello(@PathVariable String name) {
+		return "Hello " + name + "!!";
+	}
+	
+	@RequestMapping(value="/getAvailableMetrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public MetricDescriptionListDTO getAvailableMetrics() {
+		MetricDescriptionListDTO availableMetrics = this.calculateMetricsService.getAvailableMetrics();
+		return availableMetrics;
+	}
+	
     @RequestMapping(value="/calculateMetrics", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Resource> calculateMetrics(@RequestBody CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException {
     	File zipFile = null;

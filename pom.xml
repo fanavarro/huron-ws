@@ -7,7 +7,7 @@
 	<groupId>es.um.dis.tecnomod</groupId>
 	<artifactId>ontology-metrics-ws</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -16,16 +16,19 @@
 	</parent>
 
 	<properties>
-		<maven.compiler.release>13</maven.compiler.release>
-		<java.version>13</java.version>
+		<java.version>${maven.compiler.release}</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<owlapi.version>5.1.20</owlapi.version>
 	</properties>
 
 
-
-
-
 	<dependencies>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-distribution</artifactId>
+			<version>${owlapi.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>es.um.dis.tecnomod</groupId>
 			<artifactId>ontology-metrics</artifactId>
@@ -47,6 +50,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -94,12 +103,12 @@
 	</dependencies>
 
 	<build>
+		<finalName>${artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-					<version>2.1.1.RELEASE</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -108,7 +117,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-
 				<executions>
 					<execution>
 						<goals>
@@ -129,23 +137,47 @@
 
 	<profiles>
 		<profile>
-			<id>local</id>
+			<id>localjava13</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<profile.name>local</profile.name>
+				<profile.name>localjava13</profile.name>
 				<pom.analysis.r.script.path>/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
+				<maven.compiler.release>13</maven.compiler.release>
 			</properties>
 		</profile>
 		<profile>
-			<id>tomcat</id>
+			<id>tomcatjava13</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<profile.name>tomcat</profile.name>
+				<profile.name>tomcatjava13</profile.name>
+				<pom.analysis.r.script.path>/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
+				<maven.compiler.release>13</maven.compiler.release>
+			</properties>
+		</profile>
+		<profile>
+			<id>localjava8</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<profile.name>localjava8</profile.name>
 				<pom.analysis.r.script.path>/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
+				<maven.compiler.release>8</maven.compiler.release>
+			</properties>
+		</profile>
+		<profile>
+			<id>tomcatjava8</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<profile.name>tomcatjava8</profile.name>
+				<pom.analysis.r.script.path>/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
+				<maven.compiler.release>8</maven.compiler.release>
 			</properties>
 		</profile>
 	</profiles>

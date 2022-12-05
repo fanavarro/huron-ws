@@ -3,6 +3,7 @@ package es.um.dis.ontology_metrics_ws.services;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.IOUtils;
@@ -16,7 +17,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
 	@Override
 	public File performAnalysis(File metricsTSVFile) throws IOException, InterruptedException, ExecutionException {
-		Path plotsFolder = Path.of(metricsTSVFile.getParentFile().getAbsolutePath(), "plots");
+		Path plotsFolder = Paths.get(metricsTSVFile.getParentFile().getAbsolutePath(), "plots");
 				
 		String command = String.format("Rscript %s -i %s -o %s", rscriptPath, metricsTSVFile.getAbsolutePath(), plotsFolder.toString());
 		Process process = Runtime.getRuntime().exec(command); 

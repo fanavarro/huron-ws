@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.ontology_metrics_ws.dto.input.OntologyInputDTO;
+import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionDTO;
+import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionListDTO;
 import metrics.DescriptionsPerAnnotationPropertyMetric;
 import metrics.DescriptionsPerClassMetric;
 import metrics.DescriptionsPerDataPropertyMetric;
@@ -73,7 +75,8 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 		for (OntologyInputDTO ontologyDTO : input.getOntologies()) {
 			String owlFileName = String.format("%s.owl", ontologyDTO.getName());
 			File ontologyFile = downloadService.download(ontologyDTO.getIri(), workingPath, owlFileName);
-			tasks.add(new MetricCalculationTask(this.getMetricsToApply(input.getMetrics()), ontologyFile, true, detailedFilesFolder));
+			tasks.add(new MetricCalculationTask(this.getMetricsToApply(input.getMetrics()), ontologyFile, true,
+					detailedFilesFolder));
 		}
 		return tasks;
 	}
@@ -151,7 +154,7 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 	private void executeWithTaskExecutor(File outputFile, List<MetricCalculationTask> tasks, int threads)
 			throws InterruptedException, IOException {
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
-		//ExecutorService executor = Executors.newSingleThreadExecutor();
+		// ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Future<List<MetricCalculationTaskResult>>> futureResults = executor.invokeAll(tasks);
 		FileWriter fileWriter = new FileWriter(outputFile);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -172,5 +175,51 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 
 		fileWriter.close();
 		printWriter.close();
+	}
+
+	@Override
+	public MetricDescriptionListDTO getAvailableMetrics() {
+		MetricDescriptionListDTO metricDescriptionList = new MetricDescriptionListDTO();
+		List<MetricDescriptionDTO> availableMetrics = new ArrayList<MetricDescriptionDTO>();
+
+		availableMetrics.add(new MetricDescriptionDTO("Names per class",
+				"The total number of class names over the total number of classes.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Synonyms per class",
+				"The total number of class synonyms over the total number of classes.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Descriptions per class",
+				"The total number of class descriptions over the total number of classes.", ""));
+
+		availableMetrics.add(new MetricDescriptionDTO("Names per object property",
+				"The total number of object property names over the total number of object properties.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Synonyms per object property",
+				"The total number of object property synonyms over the total number of object properties.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Descriptions per object property",
+				"The total number of object property descriptions over the total number of object properties.", ""));
+
+		availableMetrics.add(new MetricDescriptionDTO("Names per data property",
+				"The total number of data property names over the total number of data properties.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Synonyms per data property",
+				"The total number of data property synonyms over the total number of data properties.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Descriptions per data property",
+				"The total number of data property descriptions over the total number of data properties.", ""));
+
+		availableMetrics.add(new MetricDescriptionDTO("Names per annotation property",
+				"The total number of annotation property names over the total number of annotation properties.", ""));
+		availableMetrics.add(new MetricDescriptionDTO("Synonyms per annotation property",
+				"The total number of annotation property synonyms over the total number of annotation properties.",
+				""));
+		availableMetrics.add(new MetricDescriptionDTO("Descriptions per annotation property",
+				"The total number of annotation property descriptions over the total number of annotation properties.",
+				""));
+
+		availableMetrics.add(new MetricDescriptionDTO("Systematic naming",
+				"The degree in which hierarchies under LR classes exhibit the lexical regularity of the parent class.",
+				""));
+		availableMetrics.add(new MetricDescriptionDTO("Lexically suggest logically define",
+				"The degree in which LR classes are semantically linked to the classes exhibiting the corresponding lexical regularity.",
+				""));
+		
+		metricDescriptionList.setMetricDescriptionList(availableMetrics);
+		return metricDescriptionList;
 	}
 }

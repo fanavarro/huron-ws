@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +19,8 @@ public class ZipServiceImpl implements ZipService {
 
 	@Override
 	public File generateZipFile(String workingDir, File... files) {
-		File zipFile = Path.of(workingDir, ZIP_FILE_NAME).toFile();
+		File zipFile = Paths.get(workingDir, ZIP_FILE_NAME).toFile();
+		
 		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));) {
 			for (File file : files) {
 				if (file.isFile()) {
