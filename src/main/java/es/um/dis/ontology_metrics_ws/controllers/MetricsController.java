@@ -2,8 +2,8 @@ package es.um.dis.ontology_metrics_ws.controllers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
+import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionListDTO;
-import es.um.dis.ontology_metrics_ws.services.AnalysisService;
 import es.um.dis.ontology_metrics_ws.services.CalculateMetricsService;
-import es.um.dis.ontology_metrics_ws.services.ZipService;
+import es.um.dis.ontology_metrics_ws.services.CompletePipelineService;
 
 /**
  *
  * A sample greetings controller to return greeting text
  */
 @RestController
+@CrossOrigin
 public class MetricsController {
 	private final static Logger LOGGER = Logger.getLogger(MetricsController.class.getName());
 	
@@ -39,11 +40,8 @@ public class MetricsController {
 	private CalculateMetricsService calculateMetricsService;
 	
 	@Autowired
-	private AnalysisService analysisService;
+	private CompletePipelineService completePipelineService;
 	
-	@Autowired
-	private ZipService zipService;
-    
 	@RequestMapping(value="/hello/{name}", method = RequestMethod.GET)
 	public String hello(@PathVariable String name) {
 		return "Hello " + name + "!!";
@@ -57,21 +55,7 @@ public class MetricsController {
 	
     @RequestMapping(value="/calculateMetrics", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Resource> calculateMetrics(@RequestBody CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException {
-    	File zipFile = null;
-    	File metricsFile = calculateMetricsService.calculateMetrics(calculateMetricsInputDTO);
-    	String workingDir = metricsFile.getParentFile().getAbsolutePath();
-    	if (calculateMetricsInputDTO.isPerformAnalysis()) {
-    		try {
-    			File analysisFolder = analysisService.performAnalysis(metricsFile);
-    			zipFile = zipService.generateZipFile(workingDir, metricsFile, analysisFolder);
-    		} catch (ExecutionException e) {
-    			LOGGER.log(Level.SEVERE, "Error performing analysis", e);
-    			/* If there is an error permorming the analysis, do not include it in the final zip. */
-    			zipFile = zipService.generateZipFile(workingDir, metricsFile);
-    		}
-    	} else {
-    		zipFile = zipService.generateZipFile(workingDir, metricsFile);
-    	}
+    	File zipFile = completePipelineService.calculateMetricsAndPerformAnalysisIfNeeded(calculateMetricsInputDTO);
 
     	Resource resource = new FileSystemResource(zipFile);
     	HttpHeaders headers = new HttpHeaders();
@@ -83,10 +67,17 @@ public class MetricsController {
     	
     	ContentDisposition disposition = ContentDisposition
                 .attachment() 
-                .filename(resource.getFilename())
+                .filename(zipFile.getName())
                 .build();
     	headers.setContentDisposition(disposition);
     	
     	return new ResponseEntity<Resource>(new FileSystemResource(zipFile), headers, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/calculateMetricsEmail", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> calculateMetricsEmail(@RequestBody CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException {
+    	completePipelineService.calculateMetricsAndPerformAnalysisIfNeededEmail(calculateMetricsInputDTO);
+		return Collections.singletonMap("message", String.format(
+				"Your analysis is queued. The result of your request will be sent to '%s' when it is finished.", calculateMetricsInputDTO.getEmail()));
     }
 }

@@ -2,6 +2,7 @@ package es.um.dis.ontology_metrics_ws.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
@@ -25,7 +26,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 		if (resCode == 0) {
 			return plotsFolder.toFile();
 		} else {
-			String message = IOUtils.toString(process.getErrorStream());
+			String message = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
 			throw new ExecutionException(new Exception(message));
 		}
 	}

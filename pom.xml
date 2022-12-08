@@ -18,7 +18,7 @@
 	<properties>
 		<java.version>${maven.compiler.release}</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<owlapi.version>5.1.20</owlapi.version>
+		<owlapi.version>5.1.10</owlapi.version>
 	</properties>
 
 
@@ -28,7 +28,13 @@
 			<artifactId>owlapi-distribution</artifactId>
 			<version>${owlapi.version}</version>
 		</dependency>
-		
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>es.um.dis.tecnomod</groupId>
 			<artifactId>ontology-metrics</artifactId>
@@ -103,7 +109,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -139,7 +145,7 @@
 		<profile>
 			<id>localjava13</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<profile.name>localjava13</profile.name>
@@ -161,7 +167,7 @@
 		<profile>
 			<id>localjava8</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<profile.name>localjava8</profile.name>
