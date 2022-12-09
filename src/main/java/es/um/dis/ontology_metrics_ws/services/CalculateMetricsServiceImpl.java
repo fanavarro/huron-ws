@@ -109,36 +109,36 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 	private Metric getMetricByName(String name) {
 		if ("Names per class".equals(name)) {
 			return new NamesPerClassMetric();
-		} else if ("Synonyms per class".equals(name)) {
+		} else if ("Synonyms per class".equalsIgnoreCase(name)) {
 			return new SynonymsPerClassMetric();
-		} else if ("Descriptions per class".equals(name)) {
+		} else if ("Descriptions per class".equalsIgnoreCase(name)) {
 			return new DescriptionsPerClassMetric();
-		} else if ("Names per object property".equals(name)) {
+		} else if ("Names per object property".equalsIgnoreCase(name)) {
 			return new NamesPerObjectPropertyMetric();
-		} else if ("Synonyms per object property".equals(name)) {
+		} else if ("Synonyms per object property".equalsIgnoreCase(name)) {
 			return new SynonymsPerObjectPropertyMetric();
-		} else if ("Descriptions per object property".equals(name)) {
+		} else if ("Descriptions per object property".equalsIgnoreCase(name)) {
 			return new DescriptionsPerObjectPropertyMetric();
-		} else if ("Names per data property".equals(name)) {
+		} else if ("Names per data property".equalsIgnoreCase(name)) {
 			return new NamesPerDataPropertyMetric();
-		} else if ("Synonyms per data property".equals(name)) {
+		} else if ("Synonyms per data property".equalsIgnoreCase(name)) {
 			return new SynonymsPerDataPropertyMetric();
-		} else if ("Descriptions per data property".equals(name)) {
+		} else if ("Descriptions per data property".equalsIgnoreCase(name)) {
 			return new DescriptionsPerDataPropertyMetric();
-		} else if ("Names per annotation property".equals(name)) {
+		} else if ("Names per annotation property".equalsIgnoreCase(name)) {
 			return new NamesPerAnnotationPropertyMetric();
-		} else if ("Synonyms per annotation property".equals(name)) {
+		} else if ("Synonyms per annotation property".equalsIgnoreCase(name)) {
 			return new SynonymsPerAnnotationPropertyMetric();
-		} else if ("Descriptions per annotation property".equals(name)) {
+		} else if ("Descriptions per annotation property".equalsIgnoreCase(name)) {
 			return new DescriptionsPerAnnotationPropertyMetric();
-		} else if ("Lexically suggest logically define".equals(name)) {
+		} else if ("Lexically suggest logically define".equalsIgnoreCase(name)) {
 			return new LexicallySuggestLogicallyDefineMetric();
-		} else if ("LSLD".equals(name)) {
+		} else if ("LSLD".equalsIgnoreCase(name)) {
 			return new LexicallySuggestLogicallyDefineMetric();
-		} else if ("Systematic naming".equals(name)) {
+		} else if ("Systematic naming".equalsIgnoreCase(name)) {
 			return new SystematicNamingMetric();
 		} else {
-			return null; // TODO: Throw exception bad metric name.
+			throw new IllegalArgumentException(String.format("Metric '%s%' not found.", name));
 		}
 	}
 
@@ -183,42 +183,52 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 		List<MetricDescriptionDTO> availableMetrics = new ArrayList<MetricDescriptionDTO>();
 
 		availableMetrics.add(new MetricDescriptionDTO("Names per class",
-				"The total number of class names over the total number of classes.", ""));
+				"The total number of class names over the total number of classes.",
+				"This metric accounts for the number of names associated with classes, and uses the list of annotation properties used by the community for names (rdfs:label, skos:prefLabel, foaf:name, etc.). Then, this metric is calculated as the number of names associated with ontology classes divided by the total number of classes in the ontology. The range of the value of this metric is the set of real positive numbers. Values lower than one mean that there are classes without any name in the ontology. Contrariwise, a value greater than 1 indicates that there are classes with multiple names; possibly caused by the inclusion of multilingual names or by some design decision."));
 		availableMetrics.add(new MetricDescriptionDTO("Synonyms per class",
-				"The total number of class synonyms over the total number of classes.", ""));
+				"The total number of class synonyms over the total number of classes.",
+				"This metric accounts for the number of synonyms associated with classes, which can also be provided by using different annotation properties used by the community to include synonyms (oboInOwl:hasExactSynonym, skos:altLabel, iao:0000118, etc.). This metric is calculated as the number of synonyms associated with classes divided by the total number of classes in the ontology. The range of the value of this metric is the set of real positive numbers."));
 		availableMetrics.add(new MetricDescriptionDTO("Descriptions per class",
-				"The total number of class descriptions over the total number of classes.", ""));
+				"The total number of class descriptions over the total number of classes.",
+				"This metric accounts for the number of descriptions associated with classes, which can also be provided by using different annotation properties used by the community to include descriptions (rdfs:comment, skos:definition, dcterms:description, etc.). This metric is calculated as the total number of descriptions associated with ontology classes divided by the total number of classes in the ontology. The range of the value of this metric is the set of real positive numbers."));
 
 		availableMetrics.add(new MetricDescriptionDTO("Names per object property",
-				"The total number of object property names over the total number of object properties.", ""));
+				"The total number of object property names over the total number of object properties.",
+				"This metric accounts for the number of names associated with object properties, and uses the list of annotation properties used by the community for names (rdfs:label, skos:prefLabel, foaf:name, etc.). Then, this metric is calculated as the number of names associated with ontology object properties divided by the total number of object properties in the ontology. The range of the value of this metric is the set of real positive numbers. Values lower than one mean that there are object properties without any name in the ontology. Contrariwise, a value greater than 1 indicates that there are object properties with multiple names; possibly caused by the inclusion of multilingual names or by some design decision."));
 		availableMetrics.add(new MetricDescriptionDTO("Synonyms per object property",
-				"The total number of object property synonyms over the total number of object properties.", ""));
+				"The total number of object property synonyms over the total number of object properties.",
+				"This metric accounts for the number of synonyms associated with object properties, which can also be provided by using different annotation properties used by the community to include synonyms (oboInOwl:hasExactSynonym, skos:altLabel, iao:0000118, etc.). This metric is calculated as the number of synonyms associated with object properties divided by the total number of object properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 		availableMetrics.add(new MetricDescriptionDTO("Descriptions per object property",
-				"The total number of object property descriptions over the total number of object properties.", ""));
+				"The total number of object property descriptions over the total number of object properties.",
+				"This metric accounts for the number of descriptions associated with object properties, which can also be provided by using different annotation properties used by the community to include descriptions (rdfs:comment, skos:definition, dcterms:description, etc.). This metric is calculated as the total number of descriptions associated with ontology object properties divided by the total number of object properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 
 		availableMetrics.add(new MetricDescriptionDTO("Names per data property",
-				"The total number of data property names over the total number of data properties.", ""));
+				"The total number of data property names over the total number of data properties.",
+				"This metric accounts for the number of names associated with data type properties, and uses the list of annotation properties used by the community for names (rdfs:label, skos:prefLabel, foaf:name, etc.). Then, this metric is calculated as the number of names associated with ontology data type properties divided by the total number of data type properties in the ontology. The range of the value of this metric is the set of real positive numbers. Values lower than one mean that there are data type properties without any name in the ontology. Contrariwise, a value greater than 1 indicates that there are data type properties with multiple names; possibly caused by the inclusion of multilingual names or by some design decision."));
 		availableMetrics.add(new MetricDescriptionDTO("Synonyms per data property",
-				"The total number of data property synonyms over the total number of data properties.", ""));
+				"The total number of data property synonyms over the total number of data properties.",
+				"This metric accounts for the number of synonyms associated with data type properties, which can also be provided by using different annotation properties used by the community to include synonyms (oboInOwl:hasExactSynonym, skos:altLabel, iao:0000118, etc.). This metric is calculated as the number of synonyms associated with data type properties divided by the total number of data type properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 		availableMetrics.add(new MetricDescriptionDTO("Descriptions per data property",
-				"The total number of data property descriptions over the total number of data properties.", ""));
+				"The total number of data property descriptions over the total number of data properties.",
+				"This metric accounts for the number of descriptions associated with data type properties, which can also be provided by using different annotation properties used by the community to include descriptions (rdfs:comment, skos:definition, dcterms:description, etc.). This metric is calculated as the total number of descriptions associated with ontology data type properties divided by the total number of data type properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 
 		availableMetrics.add(new MetricDescriptionDTO("Names per annotation property",
-				"The total number of annotation property names over the total number of annotation properties.", ""));
+				"The total number of annotation property names over the total number of annotation properties.",
+				"This metric accounts for the number of names associated with annotation properties, and uses the list of annotation properties used by the community for names (rdfs:label, skos:prefLabel, foaf:name, etc.). Then, this metric is calculated as the number of names associated with ontology annotation properties divided by the total number of annotation properties in the ontology. The range of the value of this metric is the set of real positive numbers. Values lower than one mean that there are annotation properties without any name in the ontology. Contrariwise, a value greater than 1 indicates that there are annotation properties with multiple names; possibly caused by the inclusion of multilingual names or by some design decision."));
 		availableMetrics.add(new MetricDescriptionDTO("Synonyms per annotation property",
 				"The total number of annotation property synonyms over the total number of annotation properties.",
-				""));
+				"This metric accounts for the number of synonyms associated with annotation properties, which can also be provided by using different annotation properties used by the community to include synonyms (oboInOwl:hasExactSynonym, skos:altLabel, iao:0000118, etc.). This metric is calculated as the number of synonyms associated with annotation properties divided by the total number of annotation properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 		availableMetrics.add(new MetricDescriptionDTO("Descriptions per annotation property",
 				"The total number of annotation property descriptions over the total number of annotation properties.",
-				""));
+				"This metric accounts for the number of descriptions associated with annotation properties, which can also be provided by using different annotation properties used by the community to include descriptions (rdfs:comment, skos:definition, dcterms:description, etc.). This metric is calculated as the total number of descriptions associated with ontology annotation properties divided by the total number of annotation properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 
 		availableMetrics.add(new MetricDescriptionDTO("Systematic naming",
 				"The degree in which hierarchies under LR classes exhibit the lexical regularity of the parent class.",
-				""));
+				"This metric is related to the ontology design principle that states that classes in the same taxonomy should share part of their name, since subclasses are specializations of the parent class. In other words, class names should follow a genus-differentia style. This metric is calculated as the ratio of subclasses of an LR class that exhibit the lexical regularity of the parent class. This requires to calculate how many subclasses of a given LR class exhibit the lexical regularity in their name (positive cases) and how many do not (negative cases). The value of the metric is calculated by dividing the positive cases by the total number of cases. It is calculated for each LR class. The final value of the metric for an ontology is calculated as the sum of all the positive cases divided by the sum of all the positive and negative cases obtained by each LR class in the ontology. The value is in the range [0, 1], the highest values representing the best values for the metric."));
 		availableMetrics.add(new MetricDescriptionDTO("Lexically suggest logically define",
 				"The degree in which LR classes are semantically linked to the classes exhibiting the corresponding lexical regularity.",
-				""));
-		
+				"This metric is related to the design principle of the same name, which we interpret as follows: what is expressed in natural language for humans should be expressed as logical axioms for the machine. It is calculated as the ratio in which an LR class is semantically related to other classes exhibiting its lexical regularity. Here, two classes are semantically related if there exist a path of an arbitrary length between them through the axioms in the ontology (i.e. subclass of, equivalency, or domain/range property). For computational reasons, we limited the length of the path between classes up to 5 steps; thus, classes semantically related between them through longer paths will be considered as not semantically related. In this case, positive cases are classes exhibiting a lexical regularity and that are semantically linked with the corresponding \\textit{LR class}. Negative cases are classes exhibiting a lexical regularity and that are not semantically linked with the corresponding LR class. The value of the metric is calculated by dividing the positive cases by the total number of cases. This metric is calculated for each LR class. The final value of the metric for an ontology is calculated as the sum of all the positive cases divided by the sum of all the positive and negative cases obtained by each LR class in the ontology. The value is in the range [0, 1], the highest values representing the best values for the metric."));
+
 		metricDescriptionList.setMetricDescriptionList(availableMetrics);
 		return metricDescriptionList;
 	}

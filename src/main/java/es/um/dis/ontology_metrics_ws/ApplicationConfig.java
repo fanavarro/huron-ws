@@ -21,7 +21,7 @@ public class ApplicationConfig {
 		
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		mailSender.setHost("smtp.gmail.com");
-		mailSender.setPort(25);
+		mailSender.setPort(587);
 		mailSender.setUsername("human.readable.ontology.metrics@gmail.com");
 		mailSender.setPassword("");
 		mailSender.setJavaMailProperties(javaMailProperties);
