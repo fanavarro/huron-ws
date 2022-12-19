@@ -37,6 +37,8 @@ import metrics.NamesPerAnnotationPropertyMetric;
 import metrics.NamesPerClassMetric;
 import metrics.NamesPerDataPropertyMetric;
 import metrics.NamesPerObjectPropertyMetric;
+import metrics.NumberOfLexicalRegularitiesMetric;
+import metrics.NumberOfLexicalRegularityClassesMetric;
 import metrics.SynonymsPerAnnotationPropertyMetric;
 import metrics.SynonymsPerClassMetric;
 import metrics.SynonymsPerDataPropertyMetric;
@@ -137,6 +139,14 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 			return new LexicallySuggestLogicallyDefineMetric();
 		} else if ("Systematic naming".equalsIgnoreCase(name)) {
 			return new SystematicNamingMetric();
+		} else if ("Number of lexical regularities".equalsIgnoreCase(name)) {
+			return new NumberOfLexicalRegularitiesMetric();
+		} else if ("Number of lexical regularity classes".equalsIgnoreCase(name)) {
+			return new NumberOfLexicalRegularityClassesMetric();
+		} else if ("Number of LRs".equalsIgnoreCase(name)) {
+			return new NumberOfLexicalRegularitiesMetric();
+		} else if ("Number of LR classes".equalsIgnoreCase(name)) {
+			return new NumberOfLexicalRegularityClassesMetric();
 		} else {
 			throw new IllegalArgumentException(String.format("Metric '%s%' not found.", name));
 		}
@@ -154,7 +164,6 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 	private void executeWithTaskExecutor(File outputFile, List<MetricCalculationTask> tasks, int threads)
 			throws InterruptedException, IOException {
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
-		// ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Future<List<MetricCalculationTaskResult>>> futureResults = executor.invokeAll(tasks);
 		FileWriter fileWriter = new FileWriter(outputFile);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -222,6 +231,12 @@ public class CalculateMetricsServiceImpl implements CalculateMetricsService {
 				"The total number of annotation property descriptions over the total number of annotation properties.",
 				"This metric accounts for the number of descriptions associated with annotation properties, which can also be provided by using different annotation properties used by the community to include descriptions (rdfs:comment, skos:definition, dcterms:description, etc.). This metric is calculated as the total number of descriptions associated with ontology annotation properties divided by the total number of annotation properties in the ontology. The range of the value of this metric is the set of real positive numbers."));
 
+		availableMetrics.add(new MetricDescriptionDTO("Number of lexical regularities",
+				"The number of lexical regularities found in the ontology",
+				"This metric examines the names of the ontology classes, stabished by using 'rdfs:label', and identifies the number of lexical regularities appearing in the ontology."));
+		availableMetrics.add(new MetricDescriptionDTO("Number of lexical regularity classes",
+				"The number of ontology classes whose name is a lexical regularity.",
+				"This metric returns the number of ontology classes whose complete name, set by using 'rdfs:label', is a lexical regularity."));
 		availableMetrics.add(new MetricDescriptionDTO("Systematic naming",
 				"The degree in which hierarchies under LR classes exhibit the lexical regularity of the parent class.",
 				"This metric is related to the ontology design principle that states that classes in the same taxonomy should share part of their name, since subclasses are specializations of the parent class. In other words, class names should follow a genus-differentia style. This metric is calculated as the ratio of subclasses of an LR class that exhibit the lexical regularity of the parent class. This requires to calculate how many subclasses of a given LR class exhibit the lexical regularity in their name (positive cases) and how many do not (negative cases). The value of the metric is calculated by dividing the positive cases by the total number of cases. It is calculated for each LR class. The final value of the metric for an ontology is calculated as the sum of all the positive cases divided by the sum of all the positive and negative cases obtained by each LR class in the ontology. The value is in the range [0, 1], the highest values representing the best values for the metric."));
