@@ -1,2 +1,2 @@
-# ontology-metrics-ws
-REST endpoint for calculating ontology metrics
+# huron-ws
+REST endpoint used by [HURON](https://github.com/fanavarro/huron) for ontology metrics calculation.
