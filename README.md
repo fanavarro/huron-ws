@@ -1,2 +1,2 @@
 # huron-ws
-REST endpoint used by [HURON](https://github.com/fanavarro/huron) for ontology metrics calculation.
+REST endpoint used by [HURON](http://semantics.inf.um.es/huron) for ontology metrics calculation.
