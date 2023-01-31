@@ -1,4 +1,4 @@
-package es.um.dis.ontology_metrics_ws.dto.input;
+package es.um.dis.tecnomod.huron.ws.dto.input;
 
 import java.io.Serializable;
 import java.util.Objects;

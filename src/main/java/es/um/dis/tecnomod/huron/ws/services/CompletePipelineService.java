@@ -1,9 +1,9 @@
-package es.um.dis.ontology_metrics_ws.services;
+package es.um.dis.tecnomod.huron.ws.services;
 
 import java.io.File;
 import java.io.IOException;
 
-import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 
 
 /**

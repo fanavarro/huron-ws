@@ -1,4 +1,4 @@
-package es.um.dis.ontology_metrics_ws.controllers;
+package es.um.dis.tecnomod.huron.ws.controllers;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
-import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionListDTO;
-import es.um.dis.ontology_metrics_ws.services.CalculateMetricsService;
-import es.um.dis.ontology_metrics_ws.services.CompletePipelineService;
+import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
+import es.um.dis.tecnomod.huron.ws.services.CalculateMetricsService;
+import es.um.dis.tecnomod.huron.ws.services.CompletePipelineService;
 
 /**
  *

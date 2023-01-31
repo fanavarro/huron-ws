@@ -1,4 +1,4 @@
-package es.um.dis.ontology_metrics_ws;
+package es.um.dis.tecnomod.huron.ws;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

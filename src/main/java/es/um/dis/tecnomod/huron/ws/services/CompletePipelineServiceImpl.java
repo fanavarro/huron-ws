@@ -1,4 +1,4 @@
-package es.um.dis.ontology_metrics_ws.services;
+package es.um.dis.tecnomod.huron.ws.services;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 
 @Service
 public class CompletePipelineServiceImpl implements CompletePipelineService {

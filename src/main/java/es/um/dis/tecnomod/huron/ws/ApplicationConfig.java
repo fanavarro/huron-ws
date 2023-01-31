@@ -1,4 +1,4 @@
-package es.um.dis.ontology_metrics_ws;
+package es.um.dis.tecnomod.huron.ws;
 
 import java.util.Properties;
 

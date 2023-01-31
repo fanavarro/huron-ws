@@ -1,4 +1,4 @@
-package es.um.dis.ontology_metrics_ws.services;
+package es.um.dis.tecnomod.huron.ws.services;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,29 +23,29 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.um.dis.ontology_metrics_ws.dto.input.CalculateMetricsInputDTO;
-import es.um.dis.ontology_metrics_ws.dto.input.OntologyInputDTO;
-import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionDTO;
-import es.um.dis.ontology_metrics_ws.dto.output.MetricDescriptionListDTO;
-import metrics.DescriptionsPerAnnotationPropertyMetric;
-import metrics.DescriptionsPerClassMetric;
-import metrics.DescriptionsPerDataPropertyMetric;
-import metrics.DescriptionsPerObjectPropertyMetric;
-import metrics.LexicallySuggestLogicallyDefineMetric;
-import metrics.Metric;
-import metrics.NamesPerAnnotationPropertyMetric;
-import metrics.NamesPerClassMetric;
-import metrics.NamesPerDataPropertyMetric;
-import metrics.NamesPerObjectPropertyMetric;
-import metrics.NumberOfLexicalRegularitiesMetric;
-import metrics.NumberOfLexicalRegularityClassesMetric;
-import metrics.SynonymsPerAnnotationPropertyMetric;
-import metrics.SynonymsPerClassMetric;
-import metrics.SynonymsPerDataPropertyMetric;
-import metrics.SynonymsPerObjectPropertyMetric;
-import metrics.SystematicNamingMetric;
-import tasks.MetricCalculationTask;
-import tasks.MetricCalculationTaskResult;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerAnnotationPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerClassMetric;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerDataPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerObjectPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.LexicallySuggestLogicallyDefineMetric;
+import es.um.dis.tecnomod.huron.metrics.Metric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerAnnotationPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerClassMetric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerDataPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerObjectPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.NumberOfLexicalRegularitiesMetric;
+import es.um.dis.tecnomod.huron.metrics.NumberOfLexicalRegularityClassesMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerAnnotationPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerClassMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerDataPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerObjectPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.SystematicNamingMetric;
+import es.um.dis.tecnomod.huron.tasks.MetricCalculationTask;
+import es.um.dis.tecnomod.huron.tasks.MetricCalculationTaskResult;
+import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.input.OntologyInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
+import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
 
 @Service
 public class CalculateMetricsServiceImpl implements CalculateMetricsService {
