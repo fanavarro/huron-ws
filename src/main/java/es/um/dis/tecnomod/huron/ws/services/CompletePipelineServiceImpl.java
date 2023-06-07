@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class CompletePipelineServiceImpl implements CompletePipelineService {
 	private MailService mailService;
 	
 	@Override
-	public File calculateMetricsAndPerformAnalysisIfNeeded(CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException {
+	public File calculateMetricsAndPerformAnalysisIfNeeded(CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException, OWLOntologyCreationException {
 		File zipFile = null;
     	File metricsFile = calculateMetricsService.calculateMetrics(calculateMetricsInputDTO);
     	String workingDir = metricsFile.getParentFile().getAbsolutePath();
@@ -57,7 +58,7 @@ public class CompletePipelineServiceImpl implements CompletePipelineService {
 	
 	@Override
 	@Async
-	public void calculateMetricsAndPerformAnalysisIfNeededEmail(CalculateMetricsInputDTO calculateMetricsInputDTO) {
+	public void calculateMetricsAndPerformAnalysisIfNeededEmail(CalculateMetricsInputDTO calculateMetricsInputDTO) throws OWLOntologyCreationException {
 		File zipFile;
 		String to = calculateMetricsInputDTO.getEmail();
     	String subject = "Results of ontology metrics";

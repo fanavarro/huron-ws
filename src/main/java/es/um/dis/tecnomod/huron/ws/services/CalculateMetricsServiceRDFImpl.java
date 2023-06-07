@@ -1,16 +1,14 @@
 package es.um.dis.tecnomod.huron.ws.services;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,19 +17,40 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerAnnotationPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerClassMetric;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerDataPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.DescriptionsPerObjectPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.LexicallySuggestLogicallyDefineMetric;
+import es.um.dis.tecnomod.huron.metrics.Metric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerAnnotationPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerClassMetric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerDataPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.NamesPerObjectPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.NumberOfLexicalRegularitiesMetric;
+import es.um.dis.tecnomod.huron.metrics.NumberOfLexicalRegularityClassesMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerAnnotationPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerClassMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerDataPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.SynonymsPerObjectPropertyMetric;
+import es.um.dis.tecnomod.huron.metrics.SystematicNamingMetric;
 import es.um.dis.tecnomod.huron.tasks.MetricCalculationTask;
 import es.um.dis.tecnomod.huron.tasks.MetricCalculationTaskResult;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.input.OntologyInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
+import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
 
-@Service("calculateMetricsService")
-public class CalculateMetricsServiceImpl extends CalculateMetricsService {
+@Service("calculateMetricsServiceRDF")
+public class CalculateMetricsServiceRDFImpl extends CalculateMetricsService {
 
-	private final static Logger LOGGER = Logger.getLogger(CalculateMetricsServiceImpl.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(CalculateMetricsServiceRDFImpl.class.getName());
 
 	private static final int THREADS = 5;
 
@@ -42,7 +61,7 @@ public class CalculateMetricsServiceImpl extends CalculateMetricsService {
 	public File calculateMetrics(CalculateMetricsInputDTO input) throws IOException, InterruptedException, OWLOntologyCreationException {
 		String email = input.getEmail();
 		Path workingPath = Files.createTempDirectory(email);
-		File outputFile = new File(workingPath.toFile(), "metrics.tsv");
+		File outputFile = new File(workingPath.toFile(), "metrics.ttl");
 		LOGGER.log(Level.INFO, "Calculating tasks");
 		List<MetricCalculationTask> tasks = this.getMetricCalculationTasks(input, workingPath);
 		LOGGER.log(Level.INFO, String.format("%d tasks to perform", tasks.size()));
@@ -54,15 +73,15 @@ public class CalculateMetricsServiceImpl extends CalculateMetricsService {
 	private List<MetricCalculationTask> getMetricCalculationTasks(CalculateMetricsInputDTO input, Path workingPath)
 			throws MalformedURLException, IOException, OWLOntologyCreationException {
 		List<MetricCalculationTask> tasks = new ArrayList<>();
-		File detailedFilesFolder = Paths.get(workingPath.toAbsolutePath().toString(), "detailed_files").toFile();
 		for (OntologyInputDTO ontologyDTO : input.getOntologies()) {
 			String owlFileName = String.format("%s.owl", ontologyDTO.getName());
 			File ontologyFile = downloadService.download(ontologyDTO.getIri(), workingPath, owlFileName);
-			tasks.add(new MetricCalculationTask(this.getMetricsToApply(input.getMetrics()), ontologyFile, true,
-					detailedFilesFolder));
+			tasks.add(new MetricCalculationTask(this.getMetricsToApply(input.getMetrics()), ontologyFile, false,
+					null));
 		}
 		return tasks;
 	}
+
 
 
 	/**
@@ -76,17 +95,14 @@ public class CalculateMetricsServiceImpl extends CalculateMetricsService {
 	 */
 	private void executeWithTaskExecutor(File outputFile, List<MetricCalculationTask> tasks, int threads)
 			throws InterruptedException, IOException {
+		Model rdfModel = ModelFactory.createDefaultModel();
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
 		List<Future<List<MetricCalculationTaskResult>>> futureResults = executor.invokeAll(tasks);
-		FileWriter fileWriter = new FileWriter(outputFile);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-		printWriter.print("Ontology\tMetric\tValue\n");
 		for (Future<List<MetricCalculationTaskResult>> futureResult : futureResults) {
 			try {
 				List<MetricCalculationTaskResult> results = futureResult.get();
 				for (MetricCalculationTaskResult result : results) {
-					printWriter.printf(Locale.ROOT, "%s\t%s\t%.3f\n", result.getOwlFile(), result.getMetricName(),
-							result.getResult());
+					rdfModel.add(result.getRdf());
 				}
 			} catch (ExecutionException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -94,8 +110,9 @@ public class CalculateMetricsServiceImpl extends CalculateMetricsService {
 		}
 		executor.shutdown();
 		executor.awaitTermination(1, TimeUnit.DAYS);
-
-		fileWriter.close();
-		printWriter.close();
+		
+		rdfModel.write(new FileOutputStream(outputFile), "N-TRIPLES");
 	}
+
+	
 }

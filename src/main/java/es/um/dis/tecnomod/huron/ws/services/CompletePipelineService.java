@@ -3,6 +3,8 @@ package es.um.dis.tecnomod.huron.ws.services;
 import java.io.File;
 import java.io.IOException;
 
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 
 
@@ -18,8 +20,9 @@ public interface CompletePipelineService {
 	 * @return the file
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws InterruptedException the interrupted exception
+	 * @throws OWLOntologyCreationException 
 	 */
-	File calculateMetricsAndPerformAnalysisIfNeeded(CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException;
+	File calculateMetricsAndPerformAnalysisIfNeeded(CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException, OWLOntologyCreationException;
 
 	/**
 	 * Calculate metrics and perform analysis if needed, and send results by email.
@@ -27,7 +30,8 @@ public interface CompletePipelineService {
 	 * @param calculateMetricsInputDTO the calculate metrics input DTO
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws InterruptedException the interrupted exception
+	 * @throws OWLOntologyCreationException 
 	 */
 	void calculateMetricsAndPerformAnalysisIfNeededEmail(CalculateMetricsInputDTO calculateMetricsInputDTO)
-			throws IOException, InterruptedException;
+			throws IOException, InterruptedException, OWLOntologyCreationException;
 }

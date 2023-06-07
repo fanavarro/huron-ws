@@ -1,6 +1,7 @@
 package es.um.dis.tecnomod.huron.ws.dto.output;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,10 @@ public class MetricDescriptionListDTO implements Serializable{
 	
 	/** The metric description list. */
 	private List<MetricDescriptionDTO> metricDescriptionList;
+	
+	public MetricDescriptionListDTO() {
+		this.metricDescriptionList = new ArrayList<>();
+	}
 
 	/**
 	 * Gets the metric description list.
