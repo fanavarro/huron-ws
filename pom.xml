@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>es.um.dis.tecnomod</groupId>
 			<artifactId>huron</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
