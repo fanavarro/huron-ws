@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,29 +22,10 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.um.dis.tecnomod.huron.metrics.DescriptionsPerAnnotationPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.DescriptionsPerClassMetric;
-import es.um.dis.tecnomod.huron.metrics.DescriptionsPerDataPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.DescriptionsPerObjectPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.LexicallySuggestLogicallyDefineMetric;
-import es.um.dis.tecnomod.huron.metrics.Metric;
-import es.um.dis.tecnomod.huron.metrics.NamesPerAnnotationPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.NamesPerClassMetric;
-import es.um.dis.tecnomod.huron.metrics.NamesPerDataPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.NamesPerObjectPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.NumberOfLexicalRegularitiesMetric;
-import es.um.dis.tecnomod.huron.metrics.NumberOfLexicalRegularityClassesMetric;
-import es.um.dis.tecnomod.huron.metrics.SynonymsPerAnnotationPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.SynonymsPerClassMetric;
-import es.um.dis.tecnomod.huron.metrics.SynonymsPerDataPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.SynonymsPerObjectPropertyMetric;
-import es.um.dis.tecnomod.huron.metrics.SystematicNamingMetric;
 import es.um.dis.tecnomod.huron.tasks.MetricCalculationTask;
 import es.um.dis.tecnomod.huron.tasks.MetricCalculationTaskResult;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.input.OntologyInputDTO;
-import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
-import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
 
 @Service("calculateMetricsServiceRDF")
 public class CalculateMetricsServiceRDFImpl extends CalculateMetricsService {

@@ -3,6 +3,7 @@ package es.um.dis.tecnomod.huron.ws.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
+import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
 import es.um.dis.tecnomod.huron.ws.services.CalculateMetricsService;
 import es.um.dis.tecnomod.huron.ws.services.CompletePipelineService;
@@ -57,6 +59,13 @@ public class MetricsController {
 	@RequestMapping(value="/getAvailableMetrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public MetricDescriptionListDTO getAvailableMetrics() throws OWLOntologyCreationException {
 		MetricDescriptionListDTO availableMetrics = this.calculateMetricsService.getAvailableMetrics();
+		
+		Collections.sort(availableMetrics.getMetricDescriptionList(), new Comparator<MetricDescriptionDTO>() {
+			@Override
+			public int compare(MetricDescriptionDTO o1, MetricDescriptionDTO o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 		return availableMetrics;
 	}
 	

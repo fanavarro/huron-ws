@@ -34,6 +34,7 @@ public abstract class CalculateMetricsService {
 	
 	private static final String METRICS_JAVA_PACKAGE = "es.um.dis.tecnomod.huron.metrics";
 	private static final String OQUO_IRI = "https://purl.archive.org/oquo";
+	private static final String OQUO_DEV_IRI = "https://raw.githubusercontent.com/tecnomod-um/oquo/individuals/ontology/oquo.owl";
 	private static final String OQUO_NS = OQUO_IRI + "#";
 	private static final String IAO_DEFINITION = "http://purl.obolibrary.org/obo/IAO_0000115";
 	private static final String CROP_ACRONYM = "http://www.cropontology.org/rdf/acronym";
@@ -56,7 +57,8 @@ public abstract class CalculateMetricsService {
 	 */
 	public MetricDescriptionListDTO getAvailableMetrics() throws OWLOntologyCreationException {
 		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
-		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
+		// OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
+		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_DEV_IRI));
 		MetricDescriptionListDTO metricDescriptionList = new MetricDescriptionListDTO();
 		Set<Class> metricClasses = findAllClassesUsingClassLoader(METRICS_JAVA_PACKAGE);
 		for(Class c : metricClasses) {
@@ -64,7 +66,7 @@ public abstract class CalculateMetricsService {
 				continue;
 			}
 			String metricIRI = OQUO_NS + c.getSimpleName();
-			if (oquo.containsClassInSignature(IRI.create(metricIRI))) {
+			if (oquo.containsIndividualInSignature(IRI.create(metricIRI))) {
 				metricDescriptionList.getMetricDescriptionList().add(this.createMetricDescriptionDTO(metricIRI, oquo));
 			}
 		}
@@ -91,6 +93,10 @@ public abstract class CalculateMetricsService {
 		}
 		
 		String shortDescription = ""; // TODO: Include short descriptions in ontology.
+		List<String> shortDescriptions = OntologyUtils.getAnnotationValues(IRI.create(metricIRI), IRI.create(RDFS.COMMENT.stringValue()), oquo, false);
+		if (!shortDescriptions.isEmpty()) {
+			shortDescription = shortDescriptions.get(0);
+		}
 		
 		MetricDescriptionDTO metricDescriptionDTO = new MetricDescriptionDTO(metricIRI, name, acronym, shortDescription, longDescription);
 		return metricDescriptionDTO;
