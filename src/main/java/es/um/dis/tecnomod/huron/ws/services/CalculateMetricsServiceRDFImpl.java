@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.OWL;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,8 @@ public class CalculateMetricsServiceRDFImpl extends CalculateMetricsService {
 	private void executeWithTaskExecutor(File outputFile, List<MetricCalculationTask> tasks, int threads)
 			throws InterruptedException, IOException {
 		Model rdfModel = ModelFactory.createDefaultModel();
+		// TODO: Change to oquo purl when the main branch of oquo is merged with the dev one.
+		rdfModel.add(rdfModel.createResource(), OWL.imports, rdfModel.createResource("https://raw.githubusercontent.com/tecnomod-um/oquo/individuals/ontology/oquo.owl"));
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
 		List<Future<List<MetricCalculationTaskResult>>> futureResults = executor.invokeAll(tasks);
 		for (Future<List<MetricCalculationTaskResult>> futureResult : futureResults) {
@@ -90,7 +93,6 @@ public class CalculateMetricsServiceRDFImpl extends CalculateMetricsService {
 		}
 		executor.shutdown();
 		executor.awaitTermination(1, TimeUnit.DAYS);
-		
 		rdfModel.write(new FileOutputStream(outputFile), "N-TRIPLES");
 	}
 
