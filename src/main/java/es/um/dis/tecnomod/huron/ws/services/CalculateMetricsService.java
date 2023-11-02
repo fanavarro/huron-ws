@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -60,8 +62,8 @@ public abstract class CalculateMetricsService {
 		// OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
 		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_DEV_IRI));
 		MetricDescriptionListDTO metricDescriptionList = new MetricDescriptionListDTO();
-		Set<Class> metricClasses = findAllClassesUsingClassLoader(METRICS_JAVA_PACKAGE);
-		for(Class c : metricClasses) {
+		Set<Class <? extends Object>> metricClasses = findAllClassesUsingClassLoader(METRICS_JAVA_PACKAGE);
+		for(Class <? extends Object> c : metricClasses) {
 			if (Modifier.isAbstract(c.getModifiers())) {
 				continue;
 			}
@@ -92,7 +94,7 @@ public abstract class CalculateMetricsService {
 			longDescription = longDescriptions.get(0);
 		}
 		
-		String shortDescription = ""; // TODO: Include short descriptions in ontology.
+		String shortDescription = "";
 		List<String> shortDescriptions = OntologyUtils.getAnnotationValues(IRI.create(metricIRI), IRI.create(RDFS.COMMENT.stringValue()), oquo, false);
 		if (!shortDescriptions.isEmpty()) {
 			shortDescription = shortDescriptions.get(0);
@@ -131,7 +133,7 @@ public abstract class CalculateMetricsService {
 
 	protected Metric getMetricByIRI (IRI metricIRI) {
 		String metricFragment = metricIRI.getFragment();
-		Class metricClass = this.getClass(metricFragment + ".class", METRICS_JAVA_PACKAGE);
+		Class <? extends Object> metricClass = this.getClass(metricFragment + ".class", METRICS_JAVA_PACKAGE);
 		try {
 			return (Metric) metricClass.newInstance();
 		} catch (InstantiationException e) {
@@ -143,14 +145,20 @@ public abstract class CalculateMetricsService {
 		}
 	}
 
-	private Set<Class> findAllClassesUsingClassLoader(String packageName) {
-		InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
+	private Set<Class <? extends Object>> findAllClassesUsingClassLoaderBak(String packageName) {
+		//InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
+		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		return reader.lines().filter(line -> line.endsWith(".class")).map(line -> getClass(line, packageName))
 				.collect(Collectors.toSet());
 	}
+	
+	private Set<Class <? extends Object>> findAllClassesUsingClassLoader(String packageName) {
+		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
+		return reflections.getSubTypesOf(Object.class);
+	}
 
-	private Class getClass(String className, String packageName) {
+	private Class<? extends Object> getClass(String className, String packageName) {
 		try {
 			return Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
 		} catch (ClassNotFoundException e) {
