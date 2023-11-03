@@ -21,7 +21,10 @@ public class AnalysisServiceImpl implements AnalysisService {
 		Path plotsFolder = Paths.get(metricsTSVFile.getParentFile().getAbsolutePath(), "plots");
 				
 		String command = String.format("Rscript %s -i %s -o %s", rscriptPath, metricsTSVFile.getAbsolutePath(), plotsFolder.toString());
-		Process process = Runtime.getRuntime().exec(command); 
+		ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+		processBuilder.inheritIO();
+		Process process = processBuilder.start();
+
 		int resCode = process.waitFor();
 		if (resCode == 0) {
 			return plotsFolder.toFile();
