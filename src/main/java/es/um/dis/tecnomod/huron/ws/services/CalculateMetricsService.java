@@ -1,17 +1,13 @@
 package es.um.dis.tecnomod.huron.ws.services;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.reflections.Reflections;
@@ -36,7 +32,6 @@ public abstract class CalculateMetricsService {
 	
 	private static final String METRICS_JAVA_PACKAGE = "es.um.dis.tecnomod.huron.metrics";
 	private static final String OQUO_IRI = "https://purl.archive.org/oquo";
-	private static final String OQUO_DEV_IRI = "https://raw.githubusercontent.com/tecnomod-um/oquo/individuals/ontology/oquo.owl";
 	private static final String OQUO_NS = OQUO_IRI + "#";
 	private static final String IAO_DEFINITION = "http://purl.obolibrary.org/obo/IAO_0000115";
 	private static final String CROP_ACRONYM = "http://www.cropontology.org/rdf/acronym";
@@ -59,8 +54,8 @@ public abstract class CalculateMetricsService {
 	 */
 	public MetricDescriptionListDTO getAvailableMetrics() throws OWLOntologyCreationException {
 		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
-		// OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
-		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_DEV_IRI));
+		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
+		// OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_DEV_IRI));
 		MetricDescriptionListDTO metricDescriptionList = new MetricDescriptionListDTO();
 		Set<Class <? extends Object>> metricClasses = findAllClassesUsingClassLoader(METRICS_JAVA_PACKAGE);
 		for(Class <? extends Object> c : metricClasses) {
@@ -68,7 +63,7 @@ public abstract class CalculateMetricsService {
 				continue;
 			}
 			String metricIRI = OQUO_NS + c.getSimpleName();
-			if (oquo.containsIndividualInSignature(IRI.create(metricIRI))) {
+			if (oquo.containsClassInSignature(IRI.create(metricIRI))) {
 				metricDescriptionList.getMetricDescriptionList().add(this.createMetricDescriptionDTO(metricIRI, oquo));
 			}
 		}
@@ -135,6 +130,10 @@ public abstract class CalculateMetricsService {
 		String metricFragment = metricIRI.getFragment();
 		Class <? extends Object> metricClass = this.getClass(metricFragment + ".class", METRICS_JAVA_PACKAGE);
 		try {
+			if (metricClass == null) {
+				LOGGER.log(Level.SEVERE, String.format("Error creating metric instance from IRI %s: Metric class not found.", metricIRI));
+				return null;
+			}
 			return (Metric) metricClass.newInstance();
 		} catch (InstantiationException e) {
 			LOGGER.log(Level.SEVERE, "Error creating metric instance", e);
@@ -143,14 +142,6 @@ public abstract class CalculateMetricsService {
 			LOGGER.log(Level.SEVERE, "Error creating metric instance", e);
 			return null;
 		}
-	}
-
-	private Set<Class <? extends Object>> findAllClassesUsingClassLoaderBak(String packageName) {
-		//InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
-		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		return reader.lines().filter(line -> line.endsWith(".class")).map(line -> getClass(line, packageName))
-				.collect(Collectors.toSet());
 	}
 	
 	private Set<Class <? extends Object>> findAllClassesUsingClassLoader(String packageName) {
