@@ -24,6 +24,9 @@ public class CalculateMetricsInputDTO implements Serializable {
 	
 	/** The perform analysis. */
 	private boolean performAnalysis;
+	
+	/** Consider imports? */
+	private boolean includeImports;
 
 	/**
 	 * Gets the ontologies.
@@ -97,22 +100,19 @@ public class CalculateMetricsInputDTO implements Serializable {
 		this.performAnalysis = performAnalysis;
 	}
 
-	/**
-	 * Hash code.
-	 *
-	 * @return the int
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(email, metrics, ontologies, performAnalysis);
+	public boolean isIncludeImports() {
+		return includeImports;
 	}
 
-	/**
-	 * Equals.
-	 *
-	 * @param obj the obj
-	 * @return true, if successful
-	 */
+	public void setIncludeImports(boolean includeImports) {
+		this.includeImports = includeImports;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, includeImports, metrics, ontologies, performAnalysis);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -122,15 +122,11 @@ public class CalculateMetricsInputDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		CalculateMetricsInputDTO other = (CalculateMetricsInputDTO) obj;
-		return Objects.equals(email, other.email) && Objects.equals(metrics, other.metrics)
-				&& Objects.equals(ontologies, other.ontologies) && performAnalysis == other.performAnalysis;
+		return Objects.equals(email, other.email) && includeImports == other.includeImports
+				&& Objects.equals(metrics, other.metrics) && Objects.equals(ontologies, other.ontologies)
+				&& performAnalysis == other.performAnalysis;
 	}
 
-	/**
-	 * To string.
-	 *
-	 * @return the string
-	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -142,7 +138,12 @@ public class CalculateMetricsInputDTO implements Serializable {
 		builder.append(metrics);
 		builder.append(", performAnalysis=");
 		builder.append(performAnalysis);
+		builder.append(", includeImports=");
+		builder.append(includeImports);
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
+
 }

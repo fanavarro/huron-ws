@@ -19,7 +19,7 @@
 		<java.version>${maven.compiler.release}</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<owlapi.version>5.1.10</owlapi.version>
-		<huron.version>0.0.3</huron.version>
+		<huron.version>0.0.4-SNAPSHOT</huron.version>
 	</properties>
 
 

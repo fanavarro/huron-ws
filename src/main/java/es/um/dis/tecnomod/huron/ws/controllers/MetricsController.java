@@ -18,13 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
@@ -51,12 +45,12 @@ public class MetricsController {
 	@Autowired
 	private CompletePipelineService completePipelineService;
 	
-	@RequestMapping(value="/hello/{name}", method = RequestMethod.GET)
+	@GetMapping("/hello/{name}")
 	public String hello(@PathVariable String name) {
 		return "Hello " + name + "!!";
 	}
 	
-	@RequestMapping(value="/getAvailableMetrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/getAvailableMetrics", produces = MediaType.APPLICATION_JSON_VALUE)
 	public MetricDescriptionListDTO getAvailableMetrics() throws OWLOntologyCreationException {
 		MetricDescriptionListDTO availableMetrics = this.calculateMetricsService.getAvailableMetrics();
 		
@@ -69,7 +63,7 @@ public class MetricsController {
 		return availableMetrics;
 	}
 	
-    @RequestMapping(value="/calculateMetrics", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = "application/zip")
+    @PostMapping(value="/calculateMetrics", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "application/zip")
     public ResponseEntity<Resource> calculateMetrics(@RequestBody CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException, OWLOntologyCreationException {
     	File zipFile = completePipelineService.calculateMetricsAndPerformAnalysisIfNeeded(calculateMetricsInputDTO);
 
@@ -90,7 +84,7 @@ public class MetricsController {
     	return new ResponseEntity<Resource>(new FileSystemResource(zipFile), headers, HttpStatus.OK);
     }
     
-    @RequestMapping(value="/calculateMetrics", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = "text/turtle")
+    @PostMapping(value="/calculateMetrics", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "text/turtle")
     public ResponseEntity<Resource> calculateMetricsRDF(@RequestBody CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException, OWLOntologyCreationException {
     	File rdfFile = calculateMetricsServiceRDF.calculateMetrics(calculateMetricsInputDTO);
 
@@ -111,7 +105,7 @@ public class MetricsController {
     	return new ResponseEntity<Resource>(new FileSystemResource(rdfFile), headers, HttpStatus.OK);
     }
     
-    @RequestMapping(value="/calculateMetricsEmail", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/calculateMetricsEmail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> calculateMetricsEmail(@RequestBody CalculateMetricsInputDTO calculateMetricsInputDTO) throws IOException, InterruptedException, OWLOntologyCreationException {
     	completePipelineService.calculateMetricsAndPerformAnalysisIfNeededEmail(calculateMetricsInputDTO);
 		return Collections.singletonMap("message", String.format(

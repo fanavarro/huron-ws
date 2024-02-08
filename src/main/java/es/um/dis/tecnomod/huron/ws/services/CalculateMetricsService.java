@@ -6,6 +6,11 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,8 +23,12 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
+import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.metrics.Metric;
+import es.um.dis.tecnomod.huron.result_model.ResultModelInterface;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
+import es.um.dis.tecnomod.huron.tasks.MetricCalculationTask;
+import es.um.dis.tecnomod.huron.tasks.MetricCalculationTaskResult;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
@@ -55,7 +64,6 @@ public abstract class CalculateMetricsService {
 	public MetricDescriptionListDTO getAvailableMetrics() throws OWLOntologyCreationException {
 		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
 		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
-		// OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_DEV_IRI));
 		MetricDescriptionListDTO metricDescriptionList = new MetricDescriptionListDTO();
 		Set<Class <? extends Object>> metricClasses = findAllClassesUsingClassLoader(METRICS_JAVA_PACKAGE);
 		for(Class <? extends Object> c : metricClasses) {
@@ -99,27 +107,29 @@ public abstract class CalculateMetricsService {
 		return metricDescriptionDTO;
 	}
 
-	protected List<Metric> getMetricsToApply(List<String> metricIRIs) throws OWLOntologyCreationException {
+	protected List<Metric> getMetricsToApply(List<String> metricIRIs, Config config) throws OWLOntologyCreationException {
 		List<Metric> metrics = new ArrayList<>();
 		if (metricIRIs != null && !metricIRIs.isEmpty()) {
 			for (String metricIRI : metricIRIs) {
 				Metric metric = this.getMetricByIRI(IRI.create(metricIRI));
 				if (metric != null) {
+					metric.setConfig(config);
 					metrics.add(metric);
 				}
 			}
 		} else {
-			metrics = this.getAllMetrics();
+			metrics = this.getAllMetrics(config);
 		}
 		return metrics;
 	}
 
-	protected List<Metric> getAllMetrics() throws OWLOntologyCreationException {
+	protected List<Metric> getAllMetrics(Config config) throws OWLOntologyCreationException {
 		List<Metric> metrics = new ArrayList<>();
 		MetricDescriptionListDTO availableMetrics = this.getAvailableMetrics();
 		for (MetricDescriptionDTO availableMetricDTO : availableMetrics.getMetricDescriptionList()) {
 			Metric metric = this.getMetricByIRI(IRI.create(availableMetricDTO.getIri()));
 			if (metric != null) {
+				metric.setConfig(config);
 				metrics.add(metric);
 			}
 		}
@@ -141,6 +151,35 @@ public abstract class CalculateMetricsService {
 		} catch (IllegalAccessException e) {
 			LOGGER.log(Level.SEVERE, "Error creating metric instance", e);
 			return null;
+		}
+	}
+	
+	/**
+	 * Execute with task executor.
+	 *
+	 * @param outputFile the output file
+	 * @param tasks      the tasks
+	 * @param threads    the threads
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException          Signals that an I/O exception has occurred.
+	 */
+	protected void executeWithTaskExecutor(File outputFile, List<MetricCalculationTask> tasks, Config config, int threads)
+			throws InterruptedException, IOException {
+		ExecutorService executor = Executors.newFixedThreadPool(threads);
+		List<Future<List<MetricCalculationTaskResult>>> futureResults = executor.invokeAll(tasks);
+		for (Future<List<MetricCalculationTaskResult>> futureResult : futureResults) {
+			try {
+				futureResult.get();
+			} catch (ExecutionException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+		}
+		executor.shutdown();
+		executor.awaitTermination(1, TimeUnit.DAYS);
+		
+		/* Write results to files */
+		for(ResultModelInterface outputModel : config.getResultModels()) {
+			outputModel.export();
 		}
 	}
 	
