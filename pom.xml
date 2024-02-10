@@ -6,20 +6,20 @@
 
 	<groupId>es.um.dis.tecnomod</groupId>
 	<artifactId>huron-ws</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>war</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.6</version>
+		<version>2.7.18</version>
 	</parent>
 
 	<properties>
 		<java.version>${maven.compiler.release}</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<owlapi.version>5.1.10</owlapi.version>
-		<huron.version>0.0.4-SNAPSHOT</huron.version>
+		<huron.version>0.0.4</huron.version>
 	</properties>
 
 
@@ -174,7 +174,7 @@
 		<profile>
 			<id>localjava8</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<profile.name>localjava8</profile.name>
@@ -191,6 +191,17 @@
 				<profile.name>tomcatjava8</profile.name>
 				<pom.analysis.r.script.path>/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
 				<maven.compiler.release>8</maven.compiler.release>
+			</properties>
+		</profile>
+		<profile>
+			<id>localjava17</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<profile.name>localjava17</profile.name>
+				<pom.analysis.r.script.path>/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
+				<maven.compiler.release>17</maven.compiler.release>
 			</properties>
 		</profile>
 	</profiles>

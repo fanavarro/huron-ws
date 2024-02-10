@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
@@ -32,7 +37,7 @@ import es.um.dis.tecnomod.huron.ws.services.CompletePipelineService;
 @RestController
 @CrossOrigin
 public class MetricsController {
-	private final static Logger LOGGER = Logger.getLogger(MetricsController.class.getName());
+	//private final static Logger LOGGER = Logger.getLogger(MetricsController.class.getName());
 	
 	@Autowired
 	@Qualifier("calculateMetricsService")
