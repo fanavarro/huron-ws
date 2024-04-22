@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import es.um.dis.tecnomod.huron.common.OutputFileNames;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 
 @Service
@@ -43,11 +44,13 @@ public class CompletePipelineServiceImpl implements CompletePipelineService {
     	String workingDir = metricsFile.getParentFile().getAbsolutePath();
     	if (calculateMetricsInputDTO.isPerformAnalysis()) {
     		try {
-    			File analysisFolder = analysisService.performAnalysis(metricsFile);
+    			/* The long format file should have been created if corpus analysis was required. */
+    			File metricsFileLongTable = new File(workingDir, OutputFileNames.LONG_TABLE_OUTPUT_FILE_NAME);
+    			File analysisFolder = analysisService.performAnalysis(metricsFileLongTable);
     			zipFile = zipService.generateZipFile(workingDir, metricsFile, analysisFolder);
     		} catch (ExecutionException e) {
     			LOGGER.log(Level.SEVERE, "Error performing analysis", e);
-    			/* If there is an error permorming the analysis, do not include it in the final zip. */
+    			/* If there is an error performing the analysis, do not include it in the final zip. */
     			zipFile = zipService.generateZipFile(workingDir, metricsFile);
     		}
     	} else {

@@ -25,8 +25,11 @@ public class CalculateMetricsInputDTO implements Serializable {
 	/** The perform analysis. */
 	private boolean performAnalysis;
 	
-	/** Consider imports? */
+	/**  Consider imports?. */
 	private boolean includeImports;
+	
+	/**  Output format (wide_table, long_table, or rdf). */
+	private String outputFormat;
 
 	/**
 	 * Gets the ontologies.
@@ -100,19 +103,58 @@ public class CalculateMetricsInputDTO implements Serializable {
 		this.performAnalysis = performAnalysis;
 	}
 
+	/**
+	 * Checks if is include imports.
+	 *
+	 * @return true, if is include imports
+	 */
 	public boolean isIncludeImports() {
 		return includeImports;
 	}
 
+	/**
+	 * Sets the include imports.
+	 *
+	 * @param includeImports the new include imports
+	 */
 	public void setIncludeImports(boolean includeImports) {
 		this.includeImports = includeImports;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(email, includeImports, metrics, ontologies, performAnalysis);
+	/**
+	 * Gets the output format.
+	 *
+	 * @return the output format
+	 */
+	public String getOutputFormat() {
+		return outputFormat;
 	}
 
+	/**
+	 * Sets the output format.
+	 *
+	 * @param outputFormat the new output format
+	 */
+	public void setOutputFormat(String outputFormat) {
+		this.outputFormat = outputFormat;
+	}
+
+	/**
+	 * Hash code.
+	 *
+	 * @return the int
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, includeImports, metrics, ontologies, outputFormat, performAnalysis);
+	}
+
+	/**
+	 * Equals.
+	 *
+	 * @param obj the obj
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -124,9 +166,14 @@ public class CalculateMetricsInputDTO implements Serializable {
 		CalculateMetricsInputDTO other = (CalculateMetricsInputDTO) obj;
 		return Objects.equals(email, other.email) && includeImports == other.includeImports
 				&& Objects.equals(metrics, other.metrics) && Objects.equals(ontologies, other.ontologies)
-				&& performAnalysis == other.performAnalysis;
+				&& Objects.equals(outputFormat, other.outputFormat) && performAnalysis == other.performAnalysis;
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -140,10 +187,10 @@ public class CalculateMetricsInputDTO implements Serializable {
 		builder.append(performAnalysis);
 		builder.append(", includeImports=");
 		builder.append(includeImports);
+		builder.append(", outputFormat=");
+		builder.append(outputFormat);
 		builder.append("]");
 		return builder.toString();
 	}
-
-	
 
 }
