@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.um.dis.tecnomod.huron.main.Config;
-import es.um.dis.tecnomod.huron.result_model.RDFResultModel;
+import es.um.dis.tecnomod.huron.result_model.SummaryRDFResultModel;
 import es.um.dis.tecnomod.huron.tasks.MetricCalculationTask;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.input.OntologyInputDTO;
@@ -48,7 +48,7 @@ public class CalculateMetricsServiceRDFImpl extends CalculateMetricsService {
 	private Config createConfig(CalculateMetricsInputDTO input, File outputFile) {
 		Config config = new Config();
 		config.setImports(Imports.fromBoolean(input.isIncludeImports()));
-		config.addResultModel(new RDFResultModel(outputFile));
+		config.addResultModel(new SummaryRDFResultModel(outputFile));
 		return config;
 	}
 

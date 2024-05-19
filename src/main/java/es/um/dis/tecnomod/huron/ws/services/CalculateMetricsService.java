@@ -42,6 +42,7 @@ public abstract class CalculateMetricsService {
 	private static final String METRICS_JAVA_PACKAGE = "es.um.dis.tecnomod.huron.metrics";
 	private static final String OQUO_IRI = "https://purl.archive.org/oquo";
 	private static final String OQUO_NS = OQUO_IRI + "#";
+	private static final String OQUO_HURON_IRI = "https://purl.archive.org/oquo-huron";
 	private static final String IAO_DEFINITION = "http://purl.obolibrary.org/obo/IAO_0000115";
 	private static final String CROP_ACRONYM = "http://www.cropontology.org/rdf/acronym";
 	
@@ -63,7 +64,7 @@ public abstract class CalculateMetricsService {
 	 */
 	public MetricDescriptionListDTO getAvailableMetrics() throws OWLOntologyCreationException {
 		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
-		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_IRI));
+		OWLOntology oquo = ontologyManager.loadOntology(IRI.create(OQUO_HURON_IRI));
 		MetricDescriptionListDTO metricDescriptionList = new MetricDescriptionListDTO();
 		Set<Class <? extends Object>> metricClasses = findAllClassesUsingClassLoader(METRICS_JAVA_PACKAGE);
 		for(Class <? extends Object> c : metricClasses) {

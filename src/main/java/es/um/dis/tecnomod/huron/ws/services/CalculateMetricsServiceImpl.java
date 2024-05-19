@@ -18,8 +18,9 @@ import org.springframework.stereotype.Service;
 import es.um.dis.tecnomod.huron.common.OutputFileFormats;
 import es.um.dis.tecnomod.huron.common.OutputFileNames;
 import es.um.dis.tecnomod.huron.main.Config;
+import es.um.dis.tecnomod.huron.result_model.DetailedRDFResultModel;
 import es.um.dis.tecnomod.huron.result_model.LongTSVResultModel;
-import es.um.dis.tecnomod.huron.result_model.RDFResultModel;
+import es.um.dis.tecnomod.huron.result_model.SummaryRDFResultModel;
 import es.um.dis.tecnomod.huron.result_model.WideTSVResultModel;
 import es.um.dis.tecnomod.huron.tasks.MetricCalculationTask;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
@@ -57,8 +58,10 @@ public class CalculateMetricsServiceImpl extends CalculateMetricsService {
 			config.addResultModel(new LongTSVResultModel(outputFile));
 		} else if (OutputFileFormats.WIDE_TABLE_OUTPUT_FORMAT.equals(input.getOutputFormat())) {
 			config.addResultModel(new WideTSVResultModel(outputFile));
-		} else if (OutputFileFormats.RDF_OUTPUT_FORMAT.equals(input.getOutputFormat())) {
-			config.addResultModel(new RDFResultModel(outputFile));
+		} else if (OutputFileFormats.DETAILED_RDF_OUTPUT_FORMAT.equals(input.getOutputFormat())) {
+			config.addResultModel(new DetailedRDFResultModel(outputFile));
+		} else if (OutputFileFormats.SUMMARY_RDF_OUTPUT_FORMAT.equals(input.getOutputFormat())) {
+			config.addResultModel(new SummaryRDFResultModel(outputFile));
 		} else {
 			throw new IllegalArgumentException(String.format("Output format %s not recognised.", input.getOutputFormat()));
 		}
@@ -77,8 +80,10 @@ public class CalculateMetricsServiceImpl extends CalculateMetricsService {
 			outputFile = new File(workingPath.toFile(), OutputFileNames.LONG_TABLE_OUTPUT_FILE_NAME);
 		} else if (OutputFileFormats.WIDE_TABLE_OUTPUT_FORMAT.equals(calculateMetricsInputDTO.getOutputFormat())) {
 			outputFile = new File(workingPath.toFile(), OutputFileNames.WIDE_TABLE_OUTPUT_FILE_NAME);
-		} else if (OutputFileFormats.RDF_OUTPUT_FORMAT.equals(calculateMetricsInputDTO.getOutputFormat())) {
-			outputFile = new File(workingPath.toFile(), OutputFileNames.RDF_OUTPUT_FILE_NAME);
+		} else if (OutputFileFormats.DETAILED_RDF_OUTPUT_FORMAT.equals(calculateMetricsInputDTO.getOutputFormat())) {
+			outputFile = new File(workingPath.toFile(), OutputFileNames.DETAILED_RDF_OUTPUT_FILE_NAME);
+		} else if (OutputFileFormats.SUMMARY_RDF_OUTPUT_FORMAT.equals(calculateMetricsInputDTO.getOutputFormat())) {
+			outputFile = new File(workingPath.toFile(), OutputFileNames.SUMMARY_RDF_OUTPUT_FILE_NAME);
 		} else {
 			throw new IllegalArgumentException(String.format("Output format %s not recognised.", calculateMetricsInputDTO.getOutputFormat()));
 		}
