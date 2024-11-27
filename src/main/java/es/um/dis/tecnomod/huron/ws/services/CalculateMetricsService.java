@@ -32,6 +32,7 @@ import es.um.dis.tecnomod.huron.tasks.MetricCalculationTaskResult;
 import es.um.dis.tecnomod.huron.ws.dto.input.CalculateMetricsInputDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionDTO;
 import es.um.dis.tecnomod.huron.ws.dto.output.MetricDescriptionListDTO;
+import es.um.dis.tecnomod.oquo.utils.Namespaces;
 
 /**
  * The Interface CalculateMetricsService.
@@ -40,9 +41,7 @@ public abstract class CalculateMetricsService {
 	private final static Logger LOGGER = Logger.getLogger(CalculateMetricsService.class.getName());
 	
 	private static final String METRICS_JAVA_PACKAGE = "es.um.dis.tecnomod.huron.metrics";
-	private static final String OQUO_IRI = "https://purl.archive.org/oquo";
-	private static final String OQUO_NS = OQUO_IRI + "#";
-	private static final String OQUO_HURON_IRI = "https://purl.archive.org/oquo-huron";
+	private static final String OQUO_HURON_IRI = "https://purl.org/oquo-huron";
 	private static final String IAO_DEFINITION = "http://purl.obolibrary.org/obo/IAO_0000115";
 	private static final String CROP_ACRONYM = "http://www.cropontology.org/rdf/acronym";
 	
@@ -71,7 +70,7 @@ public abstract class CalculateMetricsService {
 			if (Modifier.isAbstract(c.getModifiers())) {
 				continue;
 			}
-			String metricIRI = OQUO_NS + c.getSimpleName();
+			String metricIRI = Namespaces.OQUO_NS + c.getSimpleName();
 			if (oquo.containsClassInSignature(IRI.create(metricIRI))) {
 				metricDescriptionList.getMetricDescriptionList().add(this.createMetricDescriptionDTO(metricIRI, oquo));
 			}
