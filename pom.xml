@@ -25,6 +25,14 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>owlapi-distribution</artifactId>
 			<version>${owlapi.version}</version>
@@ -66,7 +74,8 @@
 			</exclusions>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
@@ -137,7 +146,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
@@ -186,7 +195,8 @@
 			</activation>
 			<properties>
 				<profile.name>localjava13</profile.name>
-				<pom.analysis.r.script.path>/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
+				<pom.analysis.r.script.path>
+					/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
 				<maven.compiler.release>13</maven.compiler.release>
 			</properties>
 		</profile>
@@ -197,7 +207,8 @@
 			</activation>
 			<properties>
 				<profile.name>tomcatjava13</profile.name>
-				<pom.analysis.r.script.path>/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
+				<pom.analysis.r.script.path>
+					/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
 				<maven.compiler.release>13</maven.compiler.release>
 			</properties>
 		</profile>
@@ -208,7 +219,8 @@
 			</activation>
 			<properties>
 				<profile.name>localjava8</profile.name>
-				<pom.analysis.r.script.path>/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
+				<pom.analysis.r.script.path>
+					/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
 				<maven.compiler.release>8</maven.compiler.release>
 			</properties>
 		</profile>
@@ -219,7 +231,8 @@
 			</activation>
 			<properties>
 				<profile.name>tomcatjava8</profile.name>
-				<pom.analysis.r.script.path>/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
+				<pom.analysis.r.script.path>
+					/home/swit/r_scripts/evaluome_script_ontology_metrics_fran.R</pom.analysis.r.script.path>
 				<maven.compiler.release>8</maven.compiler.release>
 			</properties>
 		</profile>
@@ -230,7 +243,8 @@
 			</activation>
 			<properties>
 				<profile.name>localjava17</profile.name>
-				<pom.analysis.r.script.path>/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
+				<pom.analysis.r.script.path>
+					/home/fabad/Proyectos_R/evaluome_script.R</pom.analysis.r.script.path>
 				<maven.compiler.release>17</maven.compiler.release>
 			</properties>
 		</profile>
